@@ -1,43 +1,21 @@
 # https://leetcode.com/problems/count-subarrays-with-score-less-than-k
+'''
+Let n be the length of the nums.
 
-class State:
-    def __init__(self, x, y, dis):
-        self.x = x
-        self.y = y
-        self.dis = dis
+Time complexity: O(n).
+We only need to traverse the array once.
 
-    def __lt__(self, other):
-        return self.dis < other.dis
-
+Space complexity: O(1).
+'''
 class Solution:
-    def minTimeToReach(self, moveTime: List[List[int]]) -> int:
-        n = len(moveTime)
-        m = len(moveTime[0])
-        inf = float("inf")
-        d = [[inf] * m for _ in range(n)]
-        v = [[0] * m for _ in range(n)]
-
-        dirs = [(1,0), (-1, 0), (0, 1), (0, -1)]
-        d[0][0] = 0
-        q = []
-        heapq.heappush(q, State(0, 0, 0))
-        
-        while q:
-         
-            s  = heapq.heappop(q)
-            if v[s.x][s.y]: 
-                continue
-            if s.x == n -1 and s.y == m -1:
-                break
-            v[s.x][s.y] = 1
-            for dx, dy in dirs:
-                nx, ny = s.x + dx, s.y + dy
-                if not (0 <= nx < n and 0 <= ny < m):
-                    continue
-                dist = max(d[s.x][s.y], moveTime[nx][ny]) + (s.x + s.y) % 2  + 1
-                if d[nx][ny] > dist:
-                    d[nx][ny] = dist
-                    heapq.heappush(q, State(nx, ny, dist))
-
-        return d[n-1][m - 1]
-        
+    def countSubarrays(self, nums: List[int], k: int) -> int:
+        n = len(nums)
+        res, total = 0, 0
+        i = 0
+        for j in range(n):
+            total += nums[j]
+            while i <= j and total * (j - i +1) >= k:
+                total -= nums[i]
+                i +=1
+            res += j - i +1
+        return res
